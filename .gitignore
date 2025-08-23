@@ -1,0 +1,33 @@
+# Build
+/target/
+
+# Maven wrapper
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+mvnw
+mvnw.cmd
+
+# Logs
+*.log
+hs_err_pid*
+
+# IntelliJ / IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+*.swp
+
+# Environment
+.env
+
+# Others
+*.db
+*.zip
+*.class
+*.jar
+*.war
