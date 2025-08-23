@@ -1,0 +1,410 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Cannot create worker GC thread. Out of system resources.
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   The process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+#   JVM is running with Zero Based Compressed Oops mode in which the Java heap is
+#     placed in the first 32GB address space. The Java Heap base address is the
+#     maximum limit for the native heap growth. Please use -XX:HeapBaseMinAddress
+#     to set the Java Heap base and to place the Java Heap above 32GB virtual address.
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (workerManager.hpp:87), pid=361235, tid=361236
+#
+# JRE version:  (17.0.9+9) (build )
+# Java VM: OpenJDK 64-Bit Server VM (17.0.9+9, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)
+# Core dump will be written. Default location: Core dumps may be processed with "/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -F%F -- %E" (or dumping to /home/sheng/Projects/job-rec-system/user-service/core.361235)
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Dnet.bytebuddy.agent.attacher.dump= net.bytebuddy.agent.Attacher com.sun.tools.attach.VirtualMachine 361149 /home/sheng/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.6/byte-buddy-agent-1.17.6.jar false 
+
+Host: AMD Ryzen 7 7800X3D 8-Core Processor, 16 cores, 30G, Kylin V10 SP1
+Time: Sat Aug  2 04:30:14 2025 PDT elapsed time: 0.002436 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000701ffc0260c0):  JavaThread "Unknown thread" [_thread_in_vm, id=361236, stack(0x0000702001900000,0x0000702001a00000)]
+
+Stack: [0x0000702001900000,0x0000702001a00000],  sp=0x00007020019fe530,  free space=1017k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0xedfde1]  VMError::report_and_die(int, char const*, char const*, __va_list_tag*, Thread*, unsigned char*, void*, void*, char const*, int, unsigned long)+0x1a1
+V  [libjvm.so+0xee09ad]  VMError::report_and_die(Thread*, char const*, int, unsigned long, VMErrorType, char const*, __va_list_tag*)+0x2d
+V  [libjvm.so+0x60ac3c]  report_vm_out_of_memory(char const*, int, unsigned long, VMErrorType, char const*, ...)+0xdc
+V  [libjvm.so+0xf13bff]  WorkerManager::add_workers(WorkGang*, unsigned int, unsigned int, unsigned int, os::ThreadType, bool)+0x18f
+V  [libjvm.so+0xf13d9a]  WorkGang::initialize_workers()+0x4a
+V  [libjvm.so+0x703d63]  G1ConcurrentMark::G1ConcurrentMark(G1CollectedHeap*, G1RegionToSpaceMapper*, G1RegionToSpaceMapper*)+0x553
+V  [libjvm.so+0x6f286c]  G1CollectedHeap::initialize()+0x70c
+V  [libjvm.so+0xe8dea2]  universe_init()+0xd2
+V  [libjvm.so+0x7ff787]  init_globals()+0x37
+V  [libjvm.so+0xe64677]  Threads::create_vm(JavaVMInitArgs*, bool*)+0x387
+V  [libjvm.so+0x8bfab2]  JNI_CreateJavaVM+0x52
+C  [libjli.so+0x9c6f]  JavaMain+0x8f
+C  [libjli.so+0xdf69]  ThreadJavaMain+0x9
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x0000702002d3a880, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+
+Other Threads:
+  0x0000701ffc054d50 GCTaskThread "GC Thread#0" [stack: 0x00007020008e4000,0x00007020009e4000] [id=361237]
+
+[error occurred during error reporting (printing all threads), id 0xb, SIGSEGV (0xb) at pc=0x00007020020ff180]
+
+VM state: not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x0000701ffc023a10] Heap_lock - owner thread: 0x0000701ffc0260c0
+
+Heap address: 0x0000000618800000, size: 7800 MB, Compressed Oops mode: Zero based, Oop shift amount: 3
+
+CDS archive(s) mapped at: [0x0000000000000000-0x0000000000000000-0x0000000000000000), size 0, SharedBaseAddress: 0x0000000800000000, ArchiveRelocationMode: 1.
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 0, Narrow klass range: 0x0
+
+GC Precious Log:
+<Empty>
+
+Heap:
+ garbage-first heap   total 0K, used 0K [0x0000000618800000, 0x0000000800000000)
+  region size 4096K, 0 young (0K), 0 survivors (0K)
+
+[error occurred during error reporting (printing heap information), id 0xb, SIGSEGV (0xb) at pc=0x00007020026c763a]
+
+GC Heap History (0 events):
+No events
+
+Dll operation events (1 events):
+Event: 0.001 Loaded shared library /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjava.so
+
+Deoptimization events (0 events):
+No events
+
+Classes unloaded (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+VM Operations (0 events):
+No events
+
+Events (1 events):
+Event: 0.001 Protecting memory [0x0000702001900000,0x0000702001904000] with protection modes 0
+
+
+Dynamic libraries:
+618800000-800000000 ---p 00000000 00:00 0 
+61598b818000-61598b819000 r--p 00000000 103:05 30427791                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/bin/java
+61598b819000-61598b81a000 r-xp 00001000 103:05 30427791                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/bin/java
+61598b81a000-61598b81b000 r--p 00002000 103:05 30427791                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/bin/java
+61598b81b000-61598b81c000 r--p 00002000 103:05 30427791                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/bin/java
+61598b81c000-61598b81d000 rw-p 00003000 103:05 30427791                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/bin/java
+6159b6d24000-6159b6d6c000 rw-p 00000000 00:00 0                          [heap]
+701fcc000000-701fcc021000 rw-p 00000000 00:00 0 
+701fcc021000-701fd0000000 ---p 00000000 00:00 0 
+701fd328c000-701fe5400000 ---p 00000000 00:00 0 
+701fe5400000-701fe5670000 rwxp 00000000 00:00 0 
+701fe5670000-701fec85f000 ---p 00000000 00:00 0 
+701fec85f000-701fecacf000 rwxp 00000000 00:00 0 
+701fecacf000-701fecfa0000 ---p 00000000 00:00 0 
+701fecfa0000-701fed210000 rwxp 00000000 00:00 0 
+701fed210000-701ff4400000 ---p 00000000 00:00 0 
+701ff4400000-701ffbfb7000 r--s 00000000 103:05 30427323                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/modules
+701ffc000000-701ffc074000 rw-p 00000000 00:00 0 
+701ffc074000-702000000000 ---p 00000000 00:00 0 
+7020003fb000-7020007e2000 rw-p 00000000 00:00 0 
+7020007e2000-7020007e3000 ---p 00000000 00:00 0 
+7020007e3000-7020008e3000 rw-p 00000000 00:00 0 
+7020008e3000-7020008e4000 ---p 00000000 00:00 0 
+7020008e4000-7020009e4000 rw-p 00000000 00:00 0 
+7020009e4000-702001733000 rw-p 00000000 00:00 0 
+702001733000-702001817000 ---p 00000000 00:00 0 
+702001817000-70200181c000 rw-p 00000000 00:00 0 
+70200181c000-702001900000 ---p 00000000 00:00 0 
+702001900000-702001904000 ---p 00000000 00:00 0 
+702001904000-702001a00000 rw-p 00000000 00:00 0 
+702001a00000-702001c53000 r--p 00000000 103:05 30427329                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/server/libjvm.so
+702001c53000-702002971000 r-xp 00253000 103:05 30427329                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/server/libjvm.so
+702002971000-702002bfd000 r--p 00f71000 103:05 30427329                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/server/libjvm.so
+702002bfd000-702002cb6000 r--p 011fc000 103:05 30427329                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/server/libjvm.so
+702002cb6000-702002ceb000 rw-p 012b5000 103:05 30427329                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/server/libjvm.so
+702002ceb000-702002e00000 rw-p 00000000 00:00 0 
+702002e00000-702002e28000 r--p 00000000 103:05 18616814                  /usr/lib/x86_64-linux-gnu/libc.so.6
+702002e28000-702002fbd000 r-xp 00028000 103:05 18616814                  /usr/lib/x86_64-linux-gnu/libc.so.6
+702002fbd000-702003015000 r--p 001bd000 103:05 18616814                  /usr/lib/x86_64-linux-gnu/libc.so.6
+702003015000-702003016000 ---p 00215000 103:05 18616814                  /usr/lib/x86_64-linux-gnu/libc.so.6
+702003016000-70200301a000 r--p 00215000 103:05 18616814                  /usr/lib/x86_64-linux-gnu/libc.so.6
+70200301a000-70200301c000 rw-p 00219000 103:05 18616814                  /usr/lib/x86_64-linux-gnu/libc.so.6
+70200301c000-702003029000 rw-p 00000000 00:00 0 
+702003053000-702003095000 rw-p 00000000 00:00 0 
+702003095000-70200309f000 ---p 00000000 00:00 0 
+70200309f000-7020030ad000 r--p 00000000 103:05 30427314                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjava.so
+7020030ad000-7020030bf000 r-xp 0000e000 103:05 30427314                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjava.so
+7020030bf000-7020030c5000 r--p 00020000 103:05 30427314                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjava.so
+7020030c5000-7020030c6000 ---p 00026000 103:05 30427314                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjava.so
+7020030c6000-7020030c7000 r--p 00026000 103:05 30427314                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjava.so
+7020030c7000-7020030c8000 rw-p 00027000 103:05 30427314                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjava.so
+7020030c8000-7020030c9000 rw-p 00000000 00:00 0 
+7020030c9000-7020030cd000 r--p 00000000 103:05 30427294                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjimage.so
+7020030cd000-7020030e0000 r-xp 00004000 103:05 30427294                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjimage.so
+7020030e0000-7020030e6000 r--p 00017000 103:05 30427294                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjimage.so
+7020030e6000-7020030e8000 r--p 0001c000 103:05 30427294                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjimage.so
+7020030e8000-7020030e9000 rw-p 0001e000 103:05 30427294                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjimage.so
+7020030e9000-7020030f7000 r--p 00000000 103:05 18616821                  /usr/lib/x86_64-linux-gnu/libm.so.6
+7020030f7000-702003173000 r-xp 0000e000 103:05 18616821                  /usr/lib/x86_64-linux-gnu/libm.so.6
+702003173000-7020031ce000 r--p 0008a000 103:05 18616821                  /usr/lib/x86_64-linux-gnu/libm.so.6
+7020031ce000-7020031cf000 r--p 000e4000 103:05 18616821                  /usr/lib/x86_64-linux-gnu/libm.so.6
+7020031cf000-7020031d0000 rw-p 000e5000 103:05 18616821                  /usr/lib/x86_64-linux-gnu/libm.so.6
+7020031d0000-7020031d1000 r--p 00000000 103:05 18616834                  /usr/lib/x86_64-linux-gnu/librt.so.1
+7020031d1000-7020031d2000 r-xp 00001000 103:05 18616834                  /usr/lib/x86_64-linux-gnu/librt.so.1
+7020031d2000-7020031d3000 r--p 00002000 103:05 18616834                  /usr/lib/x86_64-linux-gnu/librt.so.1
+7020031d3000-7020031d4000 r--p 00002000 103:05 18616834                  /usr/lib/x86_64-linux-gnu/librt.so.1
+7020031d4000-7020031d5000 rw-p 00003000 103:05 18616834                  /usr/lib/x86_64-linux-gnu/librt.so.1
+7020031d5000-7020031da000 rw-p 00000000 00:00 0 
+7020031da000-7020031db000 r--p 00000000 103:05 18616818                  /usr/lib/x86_64-linux-gnu/libdl.so.2
+7020031db000-7020031dc000 r-xp 00001000 103:05 18616818                  /usr/lib/x86_64-linux-gnu/libdl.so.2
+7020031dc000-7020031dd000 r--p 00002000 103:05 18616818                  /usr/lib/x86_64-linux-gnu/libdl.so.2
+7020031dd000-7020031de000 r--p 00002000 103:05 18616818                  /usr/lib/x86_64-linux-gnu/libdl.so.2
+7020031de000-7020031df000 rw-p 00003000 103:05 18616818                  /usr/lib/x86_64-linux-gnu/libdl.so.2
+7020031df000-7020031e0000 r--p 00000000 103:05 18616832                  /usr/lib/x86_64-linux-gnu/libpthread.so.0
+7020031e0000-7020031e1000 r-xp 00001000 103:05 18616832                  /usr/lib/x86_64-linux-gnu/libpthread.so.0
+7020031e1000-7020031e2000 r--p 00002000 103:05 18616832                  /usr/lib/x86_64-linux-gnu/libpthread.so.0
+7020031e2000-7020031e3000 r--p 00002000 103:05 18616832                  /usr/lib/x86_64-linux-gnu/libpthread.so.0
+7020031e3000-7020031e4000 rw-p 00003000 103:05 18616832                  /usr/lib/x86_64-linux-gnu/libpthread.so.0
+7020031ed000-7020031f5000 rw-s 00000000 103:05 14287090                  /tmp/hsperfdata_sheng/361235 (deleted)
+7020031f5000-7020031f6000 ---p 00000000 00:00 0 
+7020031f6000-7020031f7000 r--p 00000000 00:00 0 
+7020031f7000-7020031fa000 r--p 00000000 103:05 30427249                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjli.so
+7020031fa000-70200320a000 r-xp 00003000 103:05 30427249                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjli.so
+70200320a000-702003211000 r--p 00013000 103:05 30427249                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjli.so
+702003211000-702003212000 r--p 00019000 103:05 30427249                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjli.so
+702003212000-702003213000 rw-p 0001a000 103:05 30427249                  /home/sheng/.sdkman/candidates/java/17.0.9-tem/lib/libjli.so
+702003213000-702003215000 rw-p 00000000 00:00 0 
+702003215000-702003217000 r--p 00000000 103:05 18616694                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+702003217000-702003241000 r-xp 00002000 103:05 18616694                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+702003241000-70200324c000 r--p 0002c000 103:05 18616694                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+70200324c000-70200324d000 ---p 00000000 00:00 0 
+70200324d000-70200324f000 r--p 00037000 103:05 18616694                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+70200324f000-702003251000 rw-p 00039000 103:05 18616694                  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7ffc14c7d000-7ffc14c9f000 rw-p 00000000 00:00 0                          [stack]
+7ffc14de7000-7ffc14deb000 r--p 00000000 00:00 0                          [vvar]
+7ffc14deb000-7ffc14ded000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]
+
+
+VM Arguments:
+jvm_args: -Dnet.bytebuddy.agent.attacher.dump= 
+java_command: net.bytebuddy.agent.Attacher com.sun.tools.attach.VirtualMachine 361149 /home/sheng/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.6/byte-buddy-agent-1.17.6.jar false 
+java_class_path (initial): /home/sheng/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.6/byte-buddy-agent-1.17.6.jar
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 12                                        {product} {ergonomic}
+     uint ConcGCThreads                            = 3                                         {product} {ergonomic}
+     uint G1ConcRefinementThreads                  = 13                                        {product} {ergonomic}
+   size_t G1HeapRegionSize                         = 4194304                                   {product} {ergonomic}
+    uintx GCDrainStackTargetSize                   = 64                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 511705088                                 {product} {ergonomic}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MaxHeapSize                              = 8178892800                                {product} {ergonomic}
+   size_t MinHeapDeltaBytes                        = 4194304                                   {product} {ergonomic}
+   size_t MinHeapSize                              = 8388608                                   {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 7602480                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122027880                              {pd product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122027880                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+   size_t SoftMaxHeapSize                          = 8178892800                             {manageable} {ergonomic}
+     bool UseCompressedClassPointers               = true                           {product lp64_product} {ergonomic}
+     bool UseCompressedOops                        = true                           {product lp64_product} {ergonomic}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags
+ #1: stderr all=off uptime,level,tags
+
+Environment Variables:
+JAVA_HOME=/home/sheng/.sdkman/candidates/java/current
+PATH=/usr/local/cuda-12.5/bin:/home/sheng/DevTools/maven/apache-maven-3.9.6/bin:/home/sheng/DevTools/scala/scala-2.12.18/bin:/home/sheng/DevTools/nodejs/node-v20.12.2-linux-x64/bin:/home/sheng/DevTools/spark/spark-3.5.1-bin-hadoop3/bin:/home/sheng/DevTools/jenv/bin:/home/sheng/.sdkman/candidates/java/current/bin:/usr/local/cuda-12.5/bin:/home/sheng/DevTools/maven/apache-maven-3.9.6/bin:/home/sheng/DevTools/scala/scala-2.12.18/bin:/home/sheng/DevTools/nodejs/node-v20.12.2-linux-x64/bin:/home/sheng/DevTools/spark/spark-3.5.1-bin-hadoop3/bin:/home/sheng/DevTools/jenv/bin:/home/sheng/ShengsApps/Anaconda3/bin:/home/sheng/ShengsApps/Anaconda3/condabin:/tmp/.mount_CursorxLyl9k/usr/bin:/tmp/.mount_CursorxLyl9k/usr/sbin:/tmp/.mount_CursorxLyl9k/usr/games:/tmp/.mount_CursorxLyl9k/bin:/tmp/.mount_CursorxLyl9k/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/sheng/DevTools/scala:/home/sheng/DevTools/scala:/home/sheng/DevTools/zookeeper/apache-zookeeper-3.8.4/bin:/home/sheng/DevTools/scala:/home/sheng/DevTools/zookeeper/apache-zookeeper-3.8.4/bin
+USERNAME=sheng
+LD_LIBRARY_PATH=/usr/local/cuda-12.5/lib64:/usr/local/cuda-12.5/lib64:/tmp/.mount_CursorxLyl9k/usr/lib/:/tmp/.mount_CursorxLyl9k/usr/lib32/:/tmp/.mount_CursorxLyl9k/usr/lib64/:/tmp/.mount_CursorxLyl9k/lib/:/tmp/.mount_CursorxLyl9k/lib/i386-linux-gnu/:/tmp/.mount_CursorxLyl9k/lib/x86_64-linux-gnu/:/tmp/.mount_CursorxLyl9k/lib/aarch64-linux-gnu/:/tmp/.mount_CursorxLyl9k/lib32/:/tmp/.mount_CursorxLyl9k/lib64/:
+SHELL=/bin/bash
+DISPLAY=:1
+LANG=en_US.UTF-8
+LC_NUMERIC=en_US.UTF-8
+LC_TIME=en_US.UTF-8
+TERM=xterm-256color
+
+Active Locale:
+LC_ALL=C
+LC_COLLATE=C
+LC_CTYPE=C
+LC_MESSAGES=C
+LC_MONETARY=C
+LC_NUMERIC=C
+LC_TIME=C
+
+Signal Handlers:
+   SIGSEGV: crash_handler in libjvm.so, mask=11100100010111111101111111111110, flags=SA_RESTART|SA_SIGINFO, unblocked
+    SIGBUS: crash_handler in libjvm.so, mask=11100100010111111101111111111110, flags=SA_RESTART|SA_SIGINFO, unblocked
+    SIGFPE: crash_handler in libjvm.so, mask=11100100010111111101111111111110, flags=SA_RESTART|SA_SIGINFO, unblocked
+   SIGPIPE: javaSignalHandler in libjvm.so, mask=11100100010111111101111111111110, flags=SA_RESTART|SA_SIGINFO, blocked
+   SIGXFSZ: javaSignalHandler in libjvm.so, mask=11100100010111111101111111111110, flags=SA_RESTART|SA_SIGINFO, blocked
+    SIGILL: crash_handler in libjvm.so, mask=11100100010111111101111111111110, flags=SA_RESTART|SA_SIGINFO, unblocked
+   SIGUSR2: SR_handler in libjvm.so, mask=00100000000000000000000000000000, flags=SA_RESTART|SA_SIGINFO, blocked
+    SIGHUP: SIG_DFL, mask=00000000000000000000000000000000, flags=none, blocked
+    SIGINT: SIG_DFL, mask=00000000000000000000000000000000, flags=none, blocked
+   SIGTERM: SIG_DFL, mask=00000000000000000000000000000000, flags=none, blocked
+   SIGQUIT: UserHandler in libjvm.so, mask=11100100010111111101111111111110, flags=SA_RESTART|SA_SIGINFO, blocked
+   SIGTRAP: crash_handler in libjvm.so, mask=11100100010111111101111111111110, flags=SA_RESTART|SA_SIGINFO, unblocked
+
+
+Periodic native trim disabled
+
+
+---------------  S Y S T E M  ---------------
+
+OS:
+DISTRIB_ID=Kylin
+DISTRIB_RELEASE=V10
+DISTRIB_CODENAME=kylin
+DISTRIB_DESCRIPTION="Kylin V10 SP1"
+DISTRIB_KYLIN_RELEASE=V10
+DISTRIB_VERSION_TYPE=enterprise
+DISTRIB_VERSION_MODE=normal
+uname: Linux 6.8.0-64-generic #67~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Jun 24 15:19:46 UTC 2 x86_64
+OS uptime: 0 days 13:39 hours
+libc: glibc 2.35 NPTL 2.35 
+rlimit (soft/hard): STACK 8192k/infinity , CORE 0k/infinity , NPROC 2048/4096 , NOFILE 131072/131072 , AS infinity/infinity , CPU infinity/infinity , DATA infinity/infinity , FSIZE infinity/infinity , MEMLOCK 3993304k/3993304k
+load average: 1.56 1.61 1.58
+
+/proc/meminfo:
+MemTotal:       31946460 kB
+MemFree:         2122080 kB
+MemAvailable:   11847176 kB
+Buffers:          694388 kB
+Cached:          8541920 kB
+SwapCached:            0 kB
+Active:         14945144 kB
+Inactive:        7531500 kB
+Active(anon):   12671128 kB
+Inactive(anon):        0 kB
+Active(file):    2274016 kB
+Inactive(file):  7531500 kB
+Unevictable:         136 kB
+Mlocked:             136 kB
+SwapTotal:       2097148 kB
+SwapFree:        2097148 kB
+Zswap:                 0 kB
+Zswapped:              0 kB
+Dirty:               324 kB
+Writeback:            32 kB
+AnonPages:      13240756 kB
+Mapped:          1946656 kB
+Shmem:            175424 kB
+KReclaimable:     381536 kB
+Slab:             774544 kB
+SReclaimable:     381536 kB
+SUnreclaim:       393008 kB
+KernelStack:       39168 kB
+PageTables:       119984 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:    18070376 kB
+Committed_AS:   39737944 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:      193460 kB
+VmallocChunk:          0 kB
+Percpu:            22400 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Unaccepted:            0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:     6728300 kB
+DirectMap2M:    24850432 kB
+DirectMap1G:     1048576 kB
+
+/sys/kernel/mm/transparent_hugepage/enabled: always [madvise] never
+/sys/kernel/mm/transparent_hugepage/defrag (defrag/compaction efforts parameter): always defer defer+madvise [madvise] never
+
+Process Memory:
+Virtual Size: 8834828K (peak: 8895340K)
+Resident Set Size: 18816K (peak: 18816K) (anon: 6144K, file: 12672K, shmem: 0K)
+Swapped out: 0K
+C-Heap outstanding allocations: 18472K, retained: 279K
+glibc malloc tunables: (default)
+
+/proc/sys/kernel/threads-max (system-wide limit on the number of threads): 248934
+/proc/sys/vm/max_map_count (maximum number of memory map areas a process may have): 655360
+/proc/sys/kernel/pid_max (system-wide limit on number of process identifiers): 4194304
+
+container (cgroup) information:
+container_type: cgroupv2
+cpu_cpuset_cpus: not supported
+cpu_memory_nodes: not supported
+active_processor_count: 16
+cpu_quota: not supported
+cpu_period: not supported
+cpu_shares: not supported
+memory_limit_in_bytes: unlimited
+memory_and_swap_limit_in_bytes: unlimited
+memory_soft_limit_in_bytes: unlimited
+memory_usage_in_bytes: 4882352 k
+memory_max_usage_in_bytes: not supported
+memory_swap_current_in_bytes: unlimited
+memory_swap_max_limit_in_bytes: unlimited
+maximum number of tasks: 37340
+current number of tasks: 375
+
+Steal ticks since vm start: 0
+Steal ticks percentage since vm start:  0.000
+
+CPU: total 16 (initial active 16) (16 cores per cpu, 2 threads per core) family 25 model 97 stepping 2 microcode 0xa60120c, cx8, cmov, fxsr, ht, mmx, 3dnowpref, sse, sse2, sse3, ssse3, sse4a, sse4.1, sse4.2, popcnt, lzcnt, tsc, tscinvbit, avx, avx2, aes, erms, clmul, bmi1, bmi2, adx, avx512f, avx512dq, avx512cd, avx512bw, avx512vl, sha, fma, vzeroupper, avx512_vpopcntdq, avx512_vpclmulqdq, avx512_vaes, avx512_vnni, clflush, clflushopt, avx512_vbmi2, avx512_vbmi
+CPU Model and flags from /proc/cpuinfo:
+model name	: AMD Ryzen 7 7800X3D 8-Core Processor
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good amd_lbr_v2 nopl nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba perfmon_v2 ibrs ibpb stibp ibrs_enhanced vmmcall fsgsbase bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local user_shstk avx512_bf16 clzero irperf xsaveerptr rdpru wbnoinvd cppc amd_ibpb_ret arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic vgif x2avic v_spec_ctrl vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid overflow_recov succor smca fsrm flush_l1d
+
+Online cpus: 0-15
+Offline cpus: 
+BIOS frequency limitation: <Not Available>
+Frequency switch latency (ns): 0
+Available cpu frequencies: <Not Available>
+Current governor: powersave
+Core performance/turbo boost: <Not Available>
+
+Memory: 4k page, physical 31946460k(2122080k free), swap 2097148k(2097148k free)
+Page Sizes: 4k
+
+vm_info: OpenJDK 64-Bit Server VM (17.0.9+9) for linux-amd64 JRE (17.0.9+9), built on Oct 17 2023 00:00:00 by "admin" with gcc 10.3.0
+
+END.
