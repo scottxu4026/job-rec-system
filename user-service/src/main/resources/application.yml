@@ -6,9 +6,10 @@ spring:
     url: jdbc:postgresql://localhost:5433/userdb
     username: jobuser
     password: admin123456
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -18,3 +19,28 @@ logging:
   level:
     org:
       springframework: INFO
+
+jwt:
+  # Base64-encoded 256-bit (32-byte) secret for HS256. Example only; replace in production.
+  # You can generate one via: openssl rand -base64 32
+  secret: "c2VjdXJlLXNlY3JldC1rZXktMzJieXRlcy1iYXNlNjQtZW5jb2RlZA=="
+  issuer: jobrec-auth
+  audience: jobrec-client
+  expirationSeconds: 3600
+
+# --- Common Spring Boot placeholders (uncomment and adjust as needed) ---
+#server:
+#  port: 8081
+#
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/userdb
+#    username: user
+#    password: pass
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: false
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
