@@ -12,7 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -33,7 +33,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
     private final JWTUtil jwtUtil;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.expirationSeconds:3600}")
     private long jwtExpirationSeconds;
@@ -87,10 +87,11 @@ public class AuthService {
 
         String token = buildTokenForUser(savedUser);
         return AuthResponse.builder()
-                .id(savedUser.getId())
+                .token(token)
                 .username(savedUser.getUsername())
                 .email(savedUser.getEmail())
-                .token(token)
+                .role(savedUser.getRole())
+                .uid(savedUser.getId())
                 .build();
     }
 
@@ -117,10 +118,11 @@ public class AuthService {
 
         String token = buildTokenForUser(user);
         return AuthResponse.builder()
-                .id(user.getId())
+                .token(token)
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .token(token)
+                .role(user.getRole())
+                .uid(user.getId())
                 .build();
     }
 

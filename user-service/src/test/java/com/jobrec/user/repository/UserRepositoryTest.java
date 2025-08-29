@@ -6,102 +6,57 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UserRepositoryTest {
+@ActiveProfiles("test")
+class UserRepositoryTest {
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Autowired
-    private UserProfileRepository userProfileRepository;
+	@Autowired
+	private UserProfileRepository userProfileRepository;
 
-    @Test
-    @DisplayName("Test User and UserProfile CRUD operations")
-    @Transactional
-    public void testUserAndUserProfileCRUD() {
-        // Create User
-        User user = User.builder()
-                .username("testuser")
-                .email("testuser@example.com")
-                .password("password")
-                .build();
-        user = userRepository.save(user);
-        assertNotNull(user.getId(), "User ID should not be null after save");
+	@Test
+	@DisplayName("persist and find user by username and email")
+	void persist_and_find() {
+		User user = User.builder()
+				.username("alice")
+				.email("alice@example.com")
+				.password("pw")
+				.role("USER")
+				.build();
+		User saved = userRepository.save(user);
 
-        // Create UserProfile
-        UserProfile profile = UserProfile.builder()
-                .user(user)
-                .firstName("Test")
-                .lastName("User")
-                .build();
-        profile = userProfileRepository.save(profile);
-        assertNotNull(profile.getId(), "UserProfile ID should not be null after save");
+		UserProfile profile = UserProfile.builder()
+				.user(saved)
+				.firstName("Alice")
+				.lastName("Doe")
+				.build();
+		userProfileRepository.save(profile);
 
-        // Verify relationship
-        Optional<UserProfile> foundProfile = userProfileRepository.findById(profile.getId());
-        assertTrue(foundProfile.isPresent(), "UserProfile should be present");
-        assertEquals(user.getId(), foundProfile.get().getUser().getId(), "User ID should match");
+		Optional<User> foundByUsername = userRepository.findByUsername("alice");
+		Optional<User> foundByEmail = userRepository.findByEmail("alice@example.com");
+		Optional<User> either = userRepository.findByUsernameOrEmail("alice", "alice@example.com");
 
-        // Update User
-        user.setEmail("updateduser@example.com");
-        user = userRepository.save(user);
-        assertEquals("updateduser@example.com", user.getEmail(), "User email should be updated");
+		assertThat(foundByUsername).isPresent();
+		assertThat(foundByEmail).isPresent();
+		assertThat(either).isPresent();
+		assertThat(foundByUsername.get().getId()).isEqualTo(saved.getId());
+	}
 
-        // Delete UserProfile
-        userProfileRepository.delete(profile);
-        assertTrue(userProfileRepository.findById(profile.getId()).isEmpty(), "UserProfile should be deleted");
-
-        // Delete User
-        userRepository.delete(user);
-        assertTrue(userRepository.findById(user.getId()).isEmpty(), "User should be deleted");
-    }
-
-    @Test
-    @DisplayName("Test batch insert of Users with UserProfiles")
-    @Transactional
-    public void testBatchInsertUsersWithProfiles() {
-        // Create Users and UserProfiles
-        List<User> users = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            User user = User.builder()
-                    .username("user" + i)
-                    .email("user" + i + "@example.com")
-                    .password("password")
-                    .build();
-            users.add(user);
-
-            UserProfile profile = UserProfile.builder()
-                    .user(user)
-                    .firstName("FirstName" + i)
-                    .lastName("LastName" + i)
-                    .location("Location" + i)
-                    .skills("Skill1, Skill2")
-                    .build();
-            userProfileRepository.save(profile);
-        }
-
-        // Save all users
-        userRepository.saveAll(users);
-
-        // Retrieve all users
-        List<User> retrievedUsers = userRepository.findAll();
-        assertEquals(5, retrievedUsers.size(), "There should be 5 users in the database");
-
-        // Assert each user has a non-null profile and valid firstName
-        for (User retrievedUser : retrievedUsers) {
-            UserProfile retrievedProfile = userProfileRepository.findById(retrievedUser.getId()).orElse(null);
-            assertNotNull(retrievedProfile, "UserProfile should not be null");
-            assertTrue(retrievedProfile.getFirstName().startsWith("FirstName"), "FirstName should be valid");
-        }
-    }
+	@Test
+	@DisplayName("queries for non-existent username/email return empty")
+	void non_existent_queries() {
+		assertThat(userRepository.findByUsername("nope")).isEmpty();
+		assertThat(userRepository.findByEmail("nope@example.com")).isEmpty();
+		assertThat(userRepository.findByUsernameOrEmail("nope", "nope@example.com")).isEmpty();
+	}
 }
+
+

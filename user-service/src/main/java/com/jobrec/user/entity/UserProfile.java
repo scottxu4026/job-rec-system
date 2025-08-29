@@ -3,6 +3,8 @@ package com.jobrec.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -47,11 +49,9 @@ public class UserProfile {
 
     private String githubUrl;
 
-    private LocalDateTime lastUpdatedAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    @PrePersist
-    @PreUpdate
-    protected void onUpdate() {
-        this.lastUpdatedAt = LocalDateTime.now();
-    }
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

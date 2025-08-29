@@ -8,17 +8,18 @@ import lombok.NoArgsConstructor;
 /**
  * AuthResponse
  *
- * DTO placeholder for authentication response data: id, username, email, token.
+ * DTO representing authentication response data after register/login.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class AuthResponse {
-    private Long id;
+    private String token;
     private String username;
     private String email;
-    private String token;
+    private String role;
+    private Long uid;
 }
 
 
