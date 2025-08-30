@@ -5,18 +5,21 @@ spring:
     password: admin123456
   jpa:
     hibernate:
-      ddl-auto: update  # 你也可以改为 validate
+      ddl-auto: update  # optional: validate / none / create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
 
-# 禁用默认的 H2 替换行为（很关键）
 test:
   database:
     replace: none
 
 logging:
   level:
+    root: INFO
+    com.jobrec: DEBUG
+    org.springframework.security: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+

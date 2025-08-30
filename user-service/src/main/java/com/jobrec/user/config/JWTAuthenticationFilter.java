@@ -80,22 +80,27 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 		} catch (ExpiredJwtException ex) {
 			log.info("JWT expired for request {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
 			response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer error=\"invalid_token\", error_description=\"expired\"");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			SecurityContextHolder.clearContext();
 		} catch (SecurityException ex) {
 			log.warn("JWT signature validation failed: {}", ex.getMessage());
 			response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer error=\"invalid_token\", error_description=\"signature_invalid\"");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			SecurityContextHolder.clearContext();
 		} catch (MalformedJwtException ex) {
 			log.warn("JWT malformed: {}", ex.getMessage());
 			response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer error=\"invalid_token\", error_description=\"malformed\"");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			SecurityContextHolder.clearContext();
 		} catch (IllegalArgumentException ex) {
 			log.debug("JWT missing/blank: {}", ex.getMessage());
 			response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer error=\"invalid_token\", error_description=\"missing_or_blank\"");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			SecurityContextHolder.clearContext();
 		} catch (Exception ex) {
 			log.debug("JWT processing failed: {}", ex.getMessage());
 			response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer error=\"invalid_token\"");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			SecurityContextHolder.clearContext();
 		}
 
