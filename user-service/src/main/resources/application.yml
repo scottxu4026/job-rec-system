@@ -1,11 +1,11 @@
 server:
-  port: 8081
+  port: 8080
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/userdb
-    username: jobuser
-    password: admin123456
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/userdb}
+    username: ${SPRING_DATASOURCE_USERNAME:jobuser}
+    password: ${SPRING_DATASOURCE_PASSWORD:admin123456}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -14,6 +14,33 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: openid,profile,email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            client-name: Google
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:25}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS_ENABLE:false}
 
 logging:
   level:
@@ -21,12 +48,15 @@ logging:
       springframework: INFO
 
 jwt:
-  # Base64-encoded 256-bit (32-byte) secret for HS256. Example only; replace in production.
-  # You can generate one via: openssl rand -base64 32
-  secret: "c2VjdXJlLXNlY3JldC1rZXktMzJieXRlcy1iYXNlNjQtZW5jb2RlZA=="
+  # Base64-encoded 256-bit (32-byte) secret for HS256.
+  secret: ${JWT_SECRET}
   issuer: jobrec-auth
   audience: jobrec-client
   expirationSeconds: 3600
+
+linkToken:
+  # Base64-encoded 256-bit secret for link tokens (account linking)
+  secret: ${LINK_TOKEN_SECRET}
 
 # --- Common Spring Boot placeholders (uncomment and adjust as needed) ---
 #server:

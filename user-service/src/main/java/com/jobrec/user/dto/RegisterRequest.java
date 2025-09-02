@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.AssertTrue;
 
 /**
  * RegisterRequest
@@ -33,6 +34,9 @@ public class RegisterRequest {
 
     @NotBlank
     private String lastName;
+
+    @AssertTrue(message = "Terms must be accepted")
+    private boolean termsAccepted;
 }
 
 

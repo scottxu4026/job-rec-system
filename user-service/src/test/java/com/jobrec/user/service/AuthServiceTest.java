@@ -2,12 +2,13 @@ package com.jobrec.user.service;
 
 import com.jobrec.user.config.JWTUtil;
 import com.jobrec.user.dto.AuthResponse;
-import com.jobrec.user.dto.LoginRequest;
 import com.jobrec.user.dto.RegisterRequest;
 import com.jobrec.user.entity.User;
 import com.jobrec.user.entity.UserProfile;
+import com.jobrec.user.entity.VerificationToken;
 import com.jobrec.user.repository.UserProfileRepository;
 import com.jobrec.user.repository.UserRepository;
+import com.jobrec.user.repository.VerificationTokenRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,10 +36,16 @@ class AuthServiceTest {
 	private UserProfileRepository userProfileRepository;
 
 	@Mock
+	private VerificationTokenRepository verificationTokenRepository;
+
+	@Mock
 	private JWTUtil jwtUtil;
 
 	@Mock
 	private PasswordEncoder passwordEncoder;
+
+	@Mock
+	private EmailService emailService;
 
 	@InjectMocks
 	private AuthService authService;
@@ -49,7 +56,7 @@ class AuthServiceTest {
 	}
 
 	@Test
-	@DisplayName("register: success with valid data")
+	@DisplayName("register: success with valid data (sends verification email)")
 	void register_success() {
 		RegisterRequest req = RegisterRequest.builder()
 				.username("alice")
@@ -57,30 +64,27 @@ class AuthServiceTest {
 				.password("secret")
 				.firstName("Alice")
 				.lastName("Doe")
+				.termsAccepted(true)
 				.build();
 
 		given(userRepository.findByUsername("alice")).willReturn(Optional.empty());
 		given(userRepository.findByEmail("alice@example.com")).willReturn(Optional.empty());
 		given(passwordEncoder.encode("secret")).willReturn("ENC-secret");
-		User persisted = User.builder().id(1L).username("alice").email("alice@example.com").password("ENC-secret").role("USER").build();
+		User persisted = User.builder().id(1L).username("alice").email("alice@example.com").password("ENC-secret").role("USER").emailVerified(false).build();
 		given(userRepository.save(any(User.class))).willReturn(persisted);
 		given(userProfileRepository.save(any(UserProfile.class))).willAnswer(inv -> inv.getArgument(0));
-		given(jwtUtil.generateToken(eq("alice"), anyMap(), anyLong())).willReturn("jwt-token");
+		given(verificationTokenRepository.save(any(VerificationToken.class))).willAnswer(inv -> inv.getArgument(0));
 
-		AuthResponse res = authService.register(req);
-
-		assertThat(res.getUsername()).isEqualTo("alice");
-		assertThat(res.getEmail()).isEqualTo("alice@example.com");
-		assertThat(res.getUid()).isEqualTo(1L);
-		assertThat(res.getRole()).isEqualTo("USER");
-		assertThat(res.getToken()).isEqualTo("jwt-token");
+		authService.register(req);
 
 		verify(userRepository).findByUsername("alice");
 		verify(userRepository).findByEmail("alice@example.com");
 		verify(passwordEncoder).encode("secret");
 		verify(userRepository).save(any(User.class));
 		verify(userProfileRepository).save(any(UserProfile.class));
-		verify(jwtUtil).generateToken(eq("alice"), anyMap(), anyLong());
+		verify(verificationTokenRepository).save(any(VerificationToken.class));
+		verify(emailService).sendVerificationEmail(eq("alice@example.com"), anyString());
+		verifyNoInteractions(jwtUtil);
 	}
 
 	@Test
@@ -94,6 +98,7 @@ class AuthServiceTest {
 				.password("pw")
 				.firstName("Bob")
 				.lastName("Doe")
+				.termsAccepted(true)
 				.build();
 
 		assertThatThrownBy(() -> authService.register(req))
@@ -118,6 +123,7 @@ class AuthServiceTest {
 				.password("pw")
 				.firstName("Carol")
 				.lastName("Doe")
+				.termsAccepted(true)
 				.build();
 
 		assertThatThrownBy(() -> authService.register(req))
@@ -133,7 +139,7 @@ class AuthServiceTest {
 	@Test
 	@DisplayName("login: success with correct credentials")
 	void login_success() {
-		User user = User.builder().id(10L).username("dave").email("dave@example.com").password("ENC-good").role("USER").build();
+		User user = User.builder().id(10L).username("dave").email("dave@example.com").password("ENC-good").role("USER").emailVerified(true).build();
 		given(userRepository.findByUsername("dave")).willReturn(Optional.of(user));
 		given(passwordEncoder.matches("good", "ENC-good")).willReturn(true);
 		given(jwtUtil.generateToken(eq("dave"), anyMap(), anyLong())).willReturn("jwt-token");
@@ -147,7 +153,7 @@ class AuthServiceTest {
 	@Test
 	@DisplayName("login: success using email as identifier")
 	void login_success_withEmailIdentifier() {
-		User user = User.builder().id(20L).username("eve").email("eve@example.com").password("ENC-pw").role("ADMIN").build();
+		User user = User.builder().id(20L).username("eve").email("eve@example.com").password("ENC-pw").role("ADMIN").emailVerified(true).build();
 		given(userRepository.findByEmail("eve@example.com")).willReturn(Optional.of(user));
 		given(passwordEncoder.matches("pw", "ENC-pw")).willReturn(true);
 		given(jwtUtil.generateToken(eq("eve"), anyMap(), anyLong())).willReturn("jwt-token");
@@ -161,7 +167,7 @@ class AuthServiceTest {
 	@Test
 	@DisplayName("login: fails on incorrect password")
 	void login_incorrectPassword() {
-		User user = User.builder().id(11L).username("erin").email("erin@example.com").password("ENC-correct").build();
+		User user = User.builder().id(11L).username("erin").email("erin@example.com").password("ENC-correct").emailVerified(true).build();
 		given(userRepository.findByUsername("erin")).willReturn(Optional.of(user));
 		given(passwordEncoder.matches("wrong", "ENC-correct")).willReturn(false);
 

@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -61,6 +63,37 @@ public class User {
 
     private String profilePictureUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "oauth_provider")
+    private OAuthProvider oauthProvider;
+
+    // --- Login audit fields ---
+    private LocalDateTime lastLoginAt;
+
+    private String lastLoginIp;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "last_login_provider")
+    private OAuthProvider lastLoginProvider;
+
+    @Builder.Default
+    @Column(name = "login_count", nullable = false, columnDefinition = "bigint default 0")
+    private Long loginCount = 0L;
+
+    @Builder.Default
+    @Column(name = "password_login_enabled", nullable = false, columnDefinition = "boolean default true")
+    private Boolean passwordLoginEnabled = true;
+
+    @Builder.Default
+    @Column(name = "email_verified", nullable = false, columnDefinition = "boolean default false")
+    private Boolean emailVerified = false;
+
+    @Column(name = "terms_accepted_at")
+    private LocalDateTime termsAcceptedAt;
+
+    @Column(name = "oauth_subject")
+    private String oauthSubject;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -83,6 +116,12 @@ public class User {
         }
         if(this.enabled == null) {
             this.enabled = true;
+        }
+        if(this.passwordLoginEnabled == null) {
+            this.passwordLoginEnabled = true;
+        }
+        if(this.emailVerified == null) {
+            this.emailVerified = false;
         }
         
     }

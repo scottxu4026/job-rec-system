@@ -24,6 +24,10 @@ public class LoginRequest {
     @NotBlank
     private String password;
 
+    // Optional one-time password for TOTP 2FA
+    @JsonAlias({"otp", "totp"})
+    private String otp;
+
     /**
      * Backward-compatible accessor used by existing service methods.
      */

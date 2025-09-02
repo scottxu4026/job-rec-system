@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User Service Demo</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 2rem; }
+    input, button { padding: .5rem; margin: .25rem 0; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    pre { background: #f7f7f7; padding: .75rem; border-radius: 6px; overflow: auto; }
+  </style>
+  <script>
+    const api = (path, opts={}) => fetch(path, opts).then(r => r.json().catch(() => ({})).then(b => ({ ok: r.ok, status: r.status, body: b })));
+    let token = null;
+
+    function setToken(t) {
+      token = t;
+      document.getElementById('token').textContent = token || '(none)';
+    }
+
+    async function register() {
+      const username = document.getElementById('reg-username').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      const firstName = document.getElementById('reg-first').value;
+      const lastName = document.getElementById('reg-last').value;
+      const termsAccepted = document.getElementById('reg-terms').checked;
+      const res = await api('/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, email, password, firstName, lastName, termsAccepted }) });
+      document.getElementById('out-register').textContent = JSON.stringify(res, null, 2);
+      if (res.ok) setToken(res.body.token);
+    }
+
+    async function login() {
+      const identifier = document.getElementById('login-identifier').value;
+      const password = document.getElementById('login-password').value;
+      const res = await api('/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ usernameOrEmail: identifier, password }) });
+      document.getElementById('out-login').textContent = JSON.stringify(res, null, 2);
+      if (res.ok) setToken(res.body.token);
+    }
+
+    async function setPassword() {
+      const password = document.getElementById('new-password').value;
+      const res = await api('/auth/password', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ password }) });
+      document.getElementById('out-setpass').textContent = JSON.stringify(res, null, 2);
+    }
+
+    async function me() {
+      const res = await fetch('/auth/me', { headers: { 'Authorization': 'Bearer ' + token }});
+      const body = await res.text();
+      document.getElementById('out-me').textContent = 'Status ' + res.status + '\n' + body;
+    }
+
+    function oauth() {
+      const w = 520, h = 640;
+      const left = (screen.width - w) / 2;
+      const top = (screen.height - h) / 2;
+      const child = window.open('/oauth2/authorization/google', 'oauth', `width=${w},height=${h},left=${left},top=${top}`);
+      const timer = setInterval(async () => {
+        try {
+          if (child.closed) { clearInterval(timer); return; }
+          const href = child.location && child.location.href || '';
+          // After successful login, backend responds JSON, not a page with URL change we can parse. Fetch last response via XHR fallback:
+        } catch (e) { /* ignore cross-origin until redirected back */ }
+        // Try to ping a no-op resource in the child to detect same-origin; fallback: fetch /auth/me in parent when cookie-less (we rely on JWT returned not cookie)
+      }, 500);
+      // As we cannot directly access popup response body, open OAuth in same tab when user prefers manual copy
+      // Provide a helper endpoint which returns token JSON in the popup; users can copy token into the field below
+    }
+
+    async function oauthDirect() {
+      const res = await fetch('/oauth2/authorization/google', { redirect: 'follow' });
+      // Fallback to normal navigation if fetch cannot follow the OAuth redirect chain
+      window.location.href = '/oauth2/authorization/google';
+    }
+
+    // Listen for link_required messages (if a front-end relay posts one in future)
+    window.addEventListener('message', async (e) => {
+      if (!e.data) return;
+      if (e.data.type === 'oauth_link_required' && e.data.linkToken) {
+        const resp = await api('/auth/link-oauth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ linkToken: e.data.linkToken }) });
+        document.getElementById('out-login').textContent = JSON.stringify(resp, null, 2);
+        if (resp.ok) setToken(resp.body.token);
+      }
+      if (e.data.type === 'oauth_success' && e.data.token) {
+        setToken(e.data.token);
+        document.getElementById('out-login').textContent = JSON.stringify({ ok: true, status: 200, body: { token: e.data.token, username: e.data.username, email: e.data.email } }, null, 2);
+      }
+    });
+  </script>
+</head>
+<body>
+  <h1>User Service Demo</h1>
+  <div class="card">
+    <div><strong>Token:</strong> <code id="token">(none)</code></div>
+  </div>
+
+  <div class="card">
+    <h3>Register (traditional)</h3>
+    <input id="reg-username" placeholder="username" />
+    <input id="reg-email" placeholder="email" />
+    <input id="reg-password" placeholder="password" type="password" />
+    <input id="reg-first" placeholder="first name" />
+    <input id="reg-last" placeholder="last name" />
+    <div>
+      <label><input id="reg-terms" type="checkbox" /> I accept the Terms of Service</label>
+    </div>
+    <div><button onclick="register()">Register</button></div>
+    <pre id="out-register"></pre>
+  </div>
+
+  <div class="card">
+    <h3>Login (traditional)</h3>
+    <input id="login-identifier" placeholder="username or email" />
+    <input id="login-password" placeholder="password" type="password" />
+    <div><button onclick="login()">Login</button></div>
+    <pre id="out-login"></pre>
+  </div>
+
+  <div class="card">
+    <h3>Forgot / Reset Password</h3>
+    <div>
+      <input id="forgot-email" placeholder="email" />
+      <button onclick="(async()=>{const email=document.getElementById('forgot-email').value; const r=await api('/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})}); document.getElementById('out-forgot').textContent=JSON.stringify(r,null,2);})()">Send reset link</button>
+    </div>
+    <div>
+      <input id="reset-token" placeholder="reset token" />
+      <input id="reset-password" placeholder="new password" type="password" />
+      <button onclick="(async()=>{const token=document.getElementById('reset-token').value; const password=document.getElementById('reset-password').value; const r=await fetch('/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,password})}); document.getElementById('out-forgot').textContent='Status '+r.status;})()">Reset password</button>
+    </div>
+    <pre id="out-forgot"></pre>
+  </div>
+
+  <div class="card">
+    <h3>Login with Google (OAuth2)</h3>
+    <button onclick="oauth()">Continue with Google</button>
+    <p>After redirect back, the backend writes JSON with a token. Copy-paste it into the token field below if needed.</p>
+  </div>
+
+  <div class="card">
+    <h3>Set Password (enable password login)</h3>
+    <input id="new-password" placeholder="new password" type="password" />
+    <div><button onclick="setPassword()">Set Password</button></div>
+    <pre id="out-setpass"></pre>
+  </div>
+
+  <div class="card">
+    <h3>Call /auth/me</h3>
+    <div><button onclick="me()">Fetch Me</button></div>
+    <pre id="out-me"></pre>
+  </div>
+</body>
+</html>
+
+
