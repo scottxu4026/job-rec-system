@@ -1,0 +1,3 @@
+# Placeholder compose. Copy your working compose here when ready.
+version: '3.8'
+services: {}
