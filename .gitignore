@@ -39,3 +39,8 @@ dist/
 .vscode/
 # Java / Maven
 target/
+.settings/
+.project
+.classpath
+.factorypath
+hs_err_pid*.log
