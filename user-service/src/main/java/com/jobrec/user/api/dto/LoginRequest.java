@@ -1,0 +1,39 @@
+package com.jobrec.user.api.dto;
+
+import com.fasterxml.jackson.annotation.JsonAlias;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * LoginRequest
+ *
+ * DTO representing login input, including identifier (username or email) and password.
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class LoginRequest {
+    @NotBlank
+    @JsonAlias({"usernameOrEmail", "username", "email", "identifier"})
+    private String identifier;
+
+    @NotBlank
+    private String password;
+
+    // Optional one-time password for TOTP 2FA
+    @JsonAlias({"otp", "totp"})
+    private String otp;
+
+    /**
+     * Backward-compatible accessor used by existing service methods.
+     */
+    public String getUsernameOrEmail() {
+        return this.identifier;
+    }
+}
+
+

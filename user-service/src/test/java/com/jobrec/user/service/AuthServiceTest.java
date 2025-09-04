@@ -1,14 +1,17 @@
 package com.jobrec.user.service;
 
-import com.jobrec.user.config.JWTUtil;
-import com.jobrec.user.dto.AuthResponse;
-import com.jobrec.user.dto.RegisterRequest;
-import com.jobrec.user.entity.User;
-import com.jobrec.user.entity.UserProfile;
-import com.jobrec.user.entity.VerificationToken;
-import com.jobrec.user.repository.UserProfileRepository;
-import com.jobrec.user.repository.UserRepository;
-import com.jobrec.user.repository.VerificationTokenRepository;
+import com.jobrec.user.infrastructure.security.jwt.JWTUtil;
+import com.jobrec.user.api.dto.AuthResponse;
+import com.jobrec.user.api.dto.RegisterRequest;
+import com.jobrec.user.infrastructure.security.token.AuthTokenFactory;
+import com.jobrec.user.domain.entity.User;
+import com.jobrec.user.domain.entity.UserProfile;
+import com.jobrec.user.domain.entity.VerificationToken;
+import com.jobrec.user.application.service.AuthService;
+import com.jobrec.user.infrastructure.mail.EmailService;
+import com.jobrec.user.domain.repository.UserProfileRepository;
+import com.jobrec.user.domain.repository.UserRepository;
+import com.jobrec.user.domain.repository.VerificationTokenRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,6 +49,9 @@ class AuthServiceTest {
 
 	@Mock
 	private EmailService emailService;
+
+	@Mock
+	private AuthTokenFactory authTokenFactory;
 
 	@InjectMocks
 	private AuthService authService;
@@ -142,12 +148,18 @@ class AuthServiceTest {
 		User user = User.builder().id(10L).username("dave").email("dave@example.com").password("ENC-good").role("USER").emailVerified(true).build();
 		given(userRepository.findByUsername("dave")).willReturn(Optional.of(user));
 		given(passwordEncoder.matches("good", "ENC-good")).willReturn(true);
-		given(jwtUtil.generateToken(eq("dave"), anyMap(), anyLong())).willReturn("jwt-token");
+		given(authTokenFactory.buildAuthResponse(eq(user))).willReturn(
+				AuthResponse.builder()
+					.token("jwt-token")
+					.expiresAt(123L)
+					.user(AuthResponse.UserInfo.builder().id(10L).email("dave@example.com").role("USER").username("dave").build())
+					.build()
+		);
 
 		AuthResponse res = authService.login("dave", "good");
-		assertThat(res.getUsername()).isEqualTo("dave");
+		assertThat(res.getUser().getUsername()).isEqualTo("dave");
 		assertThat(res.getToken()).isEqualTo("jwt-token");
-		assertThat(res.getUid()).isEqualTo(10L);
+		assertThat(res.getUser().getId()).isEqualTo(10L);
 	}
 
 	@Test
@@ -156,12 +168,18 @@ class AuthServiceTest {
 		User user = User.builder().id(20L).username("eve").email("eve@example.com").password("ENC-pw").role("ADMIN").emailVerified(true).build();
 		given(userRepository.findByEmail("eve@example.com")).willReturn(Optional.of(user));
 		given(passwordEncoder.matches("pw", "ENC-pw")).willReturn(true);
-		given(jwtUtil.generateToken(eq("eve"), anyMap(), anyLong())).willReturn("jwt-token");
+		given(authTokenFactory.buildAuthResponse(eq(user))).willReturn(
+				AuthResponse.builder()
+					.token("jwt-token")
+					.expiresAt(123L)
+					.user(AuthResponse.UserInfo.builder().id(20L).email("eve@example.com").role("ADMIN").username("eve").build())
+					.build()
+		);
 
 		AuthResponse res = authService.login("eve@example.com", "pw");
-		assertThat(res.getUsername()).isEqualTo("eve");
-		assertThat(res.getEmail()).isEqualTo("eve@example.com");
-		assertThat(res.getUid()).isEqualTo(20L);
+		assertThat(res.getUser().getUsername()).isEqualTo("eve");
+		assertThat(res.getUser().getEmail()).isEqualTo("eve@example.com");
+		assertThat(res.getUser().getId()).isEqualTo(20L);
 	}
 
 	@Test

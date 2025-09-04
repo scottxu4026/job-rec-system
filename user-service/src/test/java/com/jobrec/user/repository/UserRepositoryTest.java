@@ -1,7 +1,9 @@
 package com.jobrec.user.repository;
 
-import com.jobrec.user.entity.User;
-import com.jobrec.user.entity.UserProfile;
+import com.jobrec.user.domain.entity.User;
+import com.jobrec.user.domain.entity.UserProfile;
+import com.jobrec.user.domain.repository.UserRepository;
+import com.jobrec.user.domain.repository.UserProfileRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

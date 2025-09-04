@@ -1,25 +1,29 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/userdb
-    username: jobuser
-    password: admin123456
+    url: jdbc:h2:mem:userdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
   jpa:
     hibernate:
-      ddl-auto: update  # optional: validate / none / create-drop
+      ddl-auto: create-drop
+    show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
-
-test:
-  database:
-    replace: none
+        dialect: org.hibernate.dialect.H2Dialect
+  mail:
+    host: localhost
+    port: 2525
+    properties:
+      mail.smtp.auth: false
+      mail.smtp.starttls.enable: false
 
 logging:
   level:
-    root: INFO
-    com.jobrec: DEBUG
-    org.springframework.security: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    root: WARN
 
+jwt:
+  secret: MDEyMzQ1Njc4OV8wMTIzNDU2Nzg5XzAxMjM0NTY3ODlfMDEyMw==
+  issuer: test-issuer
+  audience: test-audience
+  expirationSeconds: 3600
