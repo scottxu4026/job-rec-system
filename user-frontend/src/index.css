@@ -29,10 +29,9 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  color: #111827; /* text-gray-900 */
+  background-color: #f9fafb; /* bg-gray-50 */
+  /* remove global flex centering to avoid interfering with page layouts */
 }
 
 h1 {
@@ -69,5 +68,15 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+/* Ensure form field text is visible on light inputs */
+@layer base {
+  input, textarea, select {
+    @apply text-gray-900;
+  }
+  input::placeholder, textarea::placeholder {
+    @apply text-gray-400;
   }
 }
