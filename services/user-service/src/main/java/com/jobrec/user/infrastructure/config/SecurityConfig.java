@@ -15,12 +15,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+// No explicit CORS imports; dev same-origin via Vite proxy to gateway
 // import not required for same-package type
 
-import java.util.List;
+// import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +38,8 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 				.csrf(csrf -> csrf.disable())
-				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+				// No explicit CORS; rely on gateway/proxy in dev
+				.cors(cors -> {})
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
@@ -70,17 +69,5 @@ public class SecurityConfig {
 		return configuration.getAuthenticationManager();
 	}
 
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		// Allow common localhost ports for Vite (5173/5174) and variations
-		configuration.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*"));
-		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-		configuration.setAllowedHeaders(List.of("Origin", "Authorization", "Content-Type", "Accept"));
-		configuration.setExposedHeaders(List.of("WWW-Authenticate"));
-		configuration.setAllowCredentials(false);
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		return source;
-	}
+	// Removed CorsConfigurationSource bean
 }

@@ -5,7 +5,8 @@ import Button from '../components/ui/Button';
 
 const LoginPage: React.FC = () => {
   const onGoogle = () => {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    const base = (import.meta as any).env?.VITE_API_BASE_URL || '/api';
+    window.location.href = `${base}/oauth2/authorization/google`;
   };
 
   return (
